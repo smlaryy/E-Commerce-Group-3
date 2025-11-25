@@ -18,7 +18,7 @@ User Pages (Customer Side):
     - List of products based on product category
 2. **Product Page:** Display a single product with detail of product, images, category, and reviews
 3. **Checkout Page:** Customer fills address, shipping type, and completes purchase
-4. **Transaction History Page (Opsional) :** Display past purchases and transaction details
+4. **Transaction History Page :** Display past purchases and transaction details
 
 Store Pages (Seller Dashboard):
 1. **Store Registration Page:** Seller creates a store profile
