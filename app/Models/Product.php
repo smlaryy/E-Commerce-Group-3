@@ -45,4 +45,15 @@ class Product extends Model
     {
         return $this->hasMany(ProductReview::class);
     }
+    public function averageRating()
+    {
+        // Mengambil rata-rata rating dari tabel product_reviews
+        return round($this->productReviews()->avg('rating') ?? 0, 1);
+    }
+
+    public function totalReviews()
+    {
+        // Mengambil total ulasan
+        return $this->productReviews()->count();
+    }
 }
