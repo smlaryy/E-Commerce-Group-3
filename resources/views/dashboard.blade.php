@@ -24,9 +24,18 @@
                                 <div class="inline-block px-4 py-1.5 bg-orange-500 text-white text-sm font-semibold rounded-full mb-4" x-text="slide.badge"></div>
                                 <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight" x-text="slide.title"></h2>
                                 <p class="text-lg sm:text-xl text-white/90 mb-6" x-text="slide.subtitle"></p>
-                                <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
+                                @if(auth()->guest())
+                                <a href="{{ route('login') }}"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
                                     Belanja Sekarang →
-                                </button>
+                                </a>
+                                @else
+                                <a href="{{ route('dashboard') }}"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full transition transform hover:scale-105 shadow-lg">
+                                    Belanja Sekarang →
+                                </a>
+                                @endif
+
                             </div>
 
                             <!-- Product Image with Dynamic Elements -->
@@ -214,9 +223,9 @@
                     <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">
                         <span class="text-yellow-500">⭐</span> Produk Unggulan Pilihan
                     </h2>
-                    <a href="{{ route('home') }}" 
-                    class="text-orange-500 hover:text-orange-600 font-semibold text-sm">Lihat Semua →</a>
-                    
+                    <a href="{{ route('home') }}"
+                        class="text-orange-500 hover:text-orange-600 font-semibold text-sm">Lihat Semua →</a>
+
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
@@ -285,11 +294,26 @@
                                         Rp {{ number_format($product->price, 0, ',', '.') }}
                                     </p>
                                 </div>
-                                <button class="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 shadow-lg transition transform hover:scale-110">
+                                @if(auth()->guest())
+                                <a href="{{ route('login') }}"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 shadow-lg transition transform hover:scale-110">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
-                                </button>
+                                </a>
+                                @else
+                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        class="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 shadow-lg transition transform hover:scale-110">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </button>
+                                </form>
+                                @endif
+
+
                             </div>
                         </div>
                     </div>
@@ -373,11 +397,26 @@
                             <p class="text-lg font-bold text-orange-600">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </p>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 shadow transition transform hover:scale-110">
+                            @if(auth()->guest())
+                            <a href="{{ route('login') }}"
+                                class="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 shadow transition transform hover:scale-110">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                 </svg>
-                            </button>
+                            </a>
+                            @else
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="bg-orange-500 hover:bg-orange-600 text-white rounded-full p-2 shadow transition transform hover:scale-110">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                </button>
+                            </form>
+                            @endif
+
+
                         </div>
                     </div>
                 </div>
