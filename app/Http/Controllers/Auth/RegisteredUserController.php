@@ -47,12 +47,16 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Redirect sesuai role
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'seller') {
             return redirect()->route('seller.dashboard');
+        } elseif ($user->role === 'buyer') {
+            return redirect()->route('dashboard'); 
         }
 
-        return redirect()->route('buyer.dashboard');
+        // Default redirect ke dashboard
+        return redirect()->route('dashboard');
     }
 }
