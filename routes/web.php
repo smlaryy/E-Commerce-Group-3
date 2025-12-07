@@ -13,28 +13,29 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
-// PUBLIC ROUTES (Untuk guest dan semua user)
+// PUBLIC ROUTES (guest & semua user)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
-// Dashboard untuk BUYER - gunakan HomeController
+// DASHBOARD BUYER
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])
         ->middleware('role:buyer')
         ->name('dashboard');
-    
-    // Profile routes
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// CART
 Route::middleware('auth')->group(function () {
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
 });
 
+// ROUTES ADMIN
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -46,10 +47,19 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('products', AdminProductController::class);
         Route::resource('categories', AdminCategoryController::class);
         Route::resource('users', AdminUserController::class);
+
+        // Tambahan untuk STORE (verifikasi / reject)
+        Route::post('/stores/{store}/verify', [AdminStoreController::class, 'verify'])
+            ->name('stores.verify');
+
+        Route::post('/stores/{store}/reject', [AdminStoreController::class, 'reject'])
+            ->name('stores.reject');
+
+        // CRUD utama store
         Route::resource('stores', AdminStoreController::class);
+
         Route::resource('transactions', AdminTransactionController::class)->only(['index','show']);
         Route::resource('withdrawals', AdminWithdrawalController::class)->only(['index','show','update']);
 });
 
 require __DIR__.'/auth.php';
-

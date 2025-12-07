@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-
     protected $fillable = [
         'user_id',
         'name',
@@ -18,9 +17,9 @@ class Store extends Model
         'address',
         'postal_code',
         'is_verified',
+        'status',
     ];
 
-    // relationships one store has one owner (user)
     public function user()
     {
         return $this->belongsTo(User::class);

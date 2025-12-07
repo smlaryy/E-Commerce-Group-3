@@ -13,17 +13,18 @@
             margin: 0;
             font-family: 'Poppins', sans-serif;
             background: #f8f8f8;
-            display: flex;
+            display: flex; /* FIX UTAMA */
         }
 
         /* SIDEBAR */
         .sidebar {
-            width: 240px;
+            width: 260px;
             background: #FF7A00;
             color: white;
             height: 100vh;
             padding: 25px 20px;
-            position: fixed;
+            box-sizing: border-box;
+            flex-shrink: 0; /* FIX UTAMA */
         }
 
         .sidebar h2 {
@@ -50,9 +51,9 @@
 
         /* CONTENT */
         .content {
-            margin-left: 260px;
+            flex: 1; /* COBA PERHATIKAN, INI FIX UTAMA */
             padding: 30px;
-            width: calc(100% - 260px);
+            box-sizing: border-box;
         }
 
         .card {
@@ -69,6 +70,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="sidebar">
