@@ -16,12 +16,19 @@
 
     <label style="margin-top:20px; display:block;">Role</label>
     <select name="role"
-        style="width:100%; padding:12px; margin:10px 0 20px 0;
+        style="width:100%; padding:12px; margin:10px 0;
                border-radius:6px; border:1px solid #ccc;">
         <option value="buyer" @selected($user->role=='buyer')>Buyer</option>
         <option value="seller" @selected($user->role=='seller')>Seller</option>
         <option value="admin" @selected($user->role=='admin')>Admin</option>
     </select>
+
+    {{-- ⛔ ERROR DITAMPILKAN DI SINI --}}
+    @error('role')
+        <div style="color:red; font-size:13px; margin-bottom:10px;">
+            {{ $message }}
+        </div>
+    @enderror
 
     <button style="
         padding:10px 18px;
@@ -30,6 +37,7 @@
         border:none;
         border-radius:6px;
         cursor:pointer;
+        margin-top:10px;
     ">
         Update Role
     </button>

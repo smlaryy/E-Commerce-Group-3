@@ -35,11 +35,27 @@ class AdminUserController extends Controller
             'role' => 'required|in:buyer,seller,admin',
         ]);
 
+        // ❌ RULE 1: Seller tidak boleh diubah menjadi admin
+        if ($user->role === 'seller' && $request->role === 'admin') {
+            return back()
+                ->withErrors(['role' => 'Seller tidak boleh diubah menjadi admin.'])
+                ->withInput();
+        }
+
+        // ❌ RULE 2: Admin tidak boleh punya toko
+        // Jadi kalau target role = admin tapi user ini masih punya toko, tolak
+        if ($request->role === 'admin' && $user->store) {
+            return back()
+                ->withErrors(['role' => 'Admin tidak boleh memiliki toko. Hapus / nonaktifkan toko user ini terlebih dahulu.'])
+                ->withInput();
+        }
+
+        // Kalau lolos aturan di atas, baru update role
         $user->role = $request->role;
         $user->save();
 
         return redirect()->route('admin.users.index')
-                        ->with('success', 'User role updated successfully.');
+                         ->with('success', 'User role updated successfully.');
     }
 
     // ============================

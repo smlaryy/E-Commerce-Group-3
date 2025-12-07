@@ -68,3 +68,10 @@
 </div>
 
 @endsection
+
+@error('role')
+    <div style="color:red; font-size:13px; margin-bottom:10px;">
+        {{ $message }}
+    </div>
+@enderror
+
