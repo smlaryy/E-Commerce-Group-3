@@ -89,25 +89,58 @@
                 @if ($transaction->payment_status === \App\Models\Transaction::STATUS_PENDING)
                     <h2 class="text-lg font-semibold mb-3">Pembayaran</h2>
 
-                    <p class="text-sm text-gray-700 mb-2">
-                        Silakan transfer ke rekening berikut:
-                    </p>
-                    <ul class="list-disc list-inside text-sm text-gray-800 mb-4">
-                        <li><strong>BCA</strong> 1234 5678 90 a.n. Toko Contoh</li>
-                    </ul>
+                    @php
+                        $method = $transaction->payment_method;
+                    @endphp
 
-                    <p class="text-sm text-gray-700 mb-4">
-                        Setelah melakukan transfer, klik tombol di bawah untuk konfirmasi bahwa Anda sudah membayar.
-                    </p>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        @if ($method === 'BCA_VA')
+                            <p>Silakan transfer ke rekening berikut:</p>
+                            <ul class="list-disc ml-5 mb-2 text-gray-800">
+                                <li>
+                                    <strong>BCA Virtual Account</strong><br>
+                                    Kode VA:
+                                    <span class="font-mono text-orange-600">
+                                        8888-{{ $transaction->id }}
+                                    </span>
+                                </li>
+                            </ul>
+                            <p>Setelah melakukan transfer, klik tombol di bawah untuk konfirmasi bahwa Anda sudah membayar.</p>
 
-                    <form action="{{ route('transactions.pay', $transaction->id) }}" method="POST">
+                        @elseif ($method === 'BNI_VA')
+                            <p>Silakan transfer ke rekening berikut:</p>
+                            <ul class="list-disc ml-5 mb-2 text-gray-800">
+                                <li>
+                                    <strong>BNI Virtual Account</strong><br>
+                                    Kode VA:
+                                    <span class="font-mono text-orange-600">
+                                        8810-{{ $transaction->id }}
+                                    </span>
+                                </li>
+                            </ul>
+                            <p>Setelah melakukan transfer, klik tombol di bawah untuk konfirmasi bahwa Anda sudah membayar.</p>
+
+                        @elseif ($method === 'QRIS')
+                            <p>Metode pembayaran yang dipilih: <strong>QRIS</strong>.</p>
+                            <p>Silakan scan kode QRIS yang disediakan untuk menyelesaikan pembayaran.</p>
+                            {{-- Nanti kalau sudah punya gambar QR, taruh di sini --}}
+                            {{-- <img src="{{ asset('images/qris-example.png') }}" class="w-40 h-40 mt-2"> --}}
+                            <p class="text-xs text-gray-500 mt-1">
+                                Setelah berhasil membayar, klik tombol di bawah untuk konfirmasi bahwa Anda sudah membayar.
+                            </p>
+
+                        @else
+                            <p>Metode pembayaran: <strong>{{ $method ?? 'Belum ditentukan' }}</strong></p>
+                            <p>Ikuti instruksi pembayaran yang dikirim oleh admin.</p>
+                        @endif
+                    </div>
+
+                    <form action="{{ route('transactions.pay', $transaction->id) }}" method="POST" class="mt-4">
                         @csrf
-                        {{-- kalau mau pilih metode pembayaran, bisa tambahkan input hidden di sini --}}
-                        {{-- <input type="hidden" name="payment_method" value="bank_transfer"> --}}
-
                         <button
                             class="px-4 py-2 bg-orange-500 hover:bg-orange-600 
-                                text-white rounded-md font-semibold shadow transition">
+                                   text-white rounded-md font-semibold shadow transition"
+                        >
                             Saya sudah bayar
                         </button>
                     </form>
