@@ -42,7 +42,11 @@ class CheckoutController extends Controller
         ]);
 
         $user  = Auth::user();
-        $buyer = $user->buyer; 
+        $buyer = $user->buyer; // kalau memang ada tabel buyers
+
+        // fallback: kalau $buyer null, pakai user_id
+        $buyerId = optional($buyer)->id ?? $user->id;
+
 
         $cartItems = CartItem::with('product.store')
             ->where('user_id', $user->id)
@@ -69,7 +73,7 @@ class CheckoutController extends Controller
 
             $transaction = Transaction::create([
                 'code'           => 'TRX-' . Str::upper(Str::random(8)),
-                'buyer_id'       => $buyer->id,
+                'buyer_id'       => $buyerId,
                 'store_id'       => $storeId,
                 'address'        => $request->address,
                 'address_id'     => null,

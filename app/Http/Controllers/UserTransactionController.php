@@ -9,10 +9,13 @@ class UserTransactionController extends Controller
 {
     public function index()
     {
-        $buyer = Auth::user()->buyer;
+        $user = Auth::user();
+
+        // kalau ada relasi buyer, pakai buyer->id, kalau tidak, pakai user->id
+        $buyerId = optional($user->buyer)->id ?? $user->id;
 
         $transactions = Transaction::with('transactionDetails.product.store')
-            ->where('buyer_id', $buyer->id)
+            ->where('buyer_id', $buyerId)
             ->latest()
             ->paginate(10);
 
@@ -21,10 +24,12 @@ class UserTransactionController extends Controller
 
     public function show($id)
     {
-        $buyer = Auth::user()->buyer;
+        $user = Auth::user();
+
+        $buyerId = optional($user->buyer)->id ?? $user->id;
 
         $transaction = Transaction::with('transactionDetails.product.store')
-            ->where('buyer_id', $buyer->id)
+            ->where('buyer_id', $buyerId)
             ->findOrFail($id);
 
         return view('transactions.show', compact('transaction'));
