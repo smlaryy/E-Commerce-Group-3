@@ -83,6 +83,33 @@
                         class="px-3 py-2 border rounded-lg w-64 focus:ring-2 focus:ring-orange-400">
                 </form>
 
+                @auth
+                    @if(Auth::user()->role === 'buyer')
+                        <a href="{{ route('cart.index') }}" 
+                        class="relative p-2 rounded-full hover:bg-orange-100 transition">
+
+                            {{-- Cart Icon Orange --}}
+                            <svg class="w-6 h-6 text-orange-500 hover:text-orange-600 transition"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.3 2.3a1 1 0 00.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4m-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+
+                            {{-- Badge item count --}}
+                            @php
+                                $cartCount = \App\Models\CartItem::where('user_id', Auth::id())->count();
+                            @endphp
+                            @if($cartCount > 0)
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 rounded-full">
+                                    {{ $cartCount }}
+                                </span>
+                            @endif
+
+                        </a>
+                    @endif
+                @endauth
+
+                <!-- USER AVATAR -->
                 @if(Auth::check())
                 @php
                 $user = Auth::user();
@@ -90,7 +117,6 @@
                 ?? 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=FFEDD5&color=EA580C';
                 @endphp
 
-                <!-- AVATAR + NAME BUTTON -->
                 <a href="{{ route('profile.edit') }}"
                     class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition">
 

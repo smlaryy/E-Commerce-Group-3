@@ -11,6 +11,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;              
+use App\Http\Controllers\UserTransactionController;        
 use App\Http\Controllers\Seller\SellerController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,9 +33,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// CART
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+
+    // Cart page (NEW)
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+
+    // Tambah cart
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+
+    // Update qty (NEW)
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+
+    // Remove item (NEW)
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+
+});
+
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+
+    // Checkout Page (NEW)
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+
+    // Submit Checkout (NEW)
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+});
+
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+
+    Route::get('/transactions', [UserTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}', [UserTransactionController::class, 'show'])->name('transactions.show');
+
 });
 
 // ROUTES ADMIN
