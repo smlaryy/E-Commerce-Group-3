@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'user_id',
         'name',
-        'logo',        
+        'logo',
         'about',
         'phone',
         'address_id',
@@ -18,6 +18,9 @@ class Store extends Model
         'postal_code',
         'is_verified',
         'status',
+        'bank_name',
+        'bank_account_number',
+        'bank_account_name',
     ];
 
     public function user()

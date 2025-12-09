@@ -20,6 +20,8 @@ class TransactionDetail extends Model
         // 'price',
     ];
 
+     protected $guarded = [];
+
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);

@@ -33,6 +33,8 @@ class Transaction extends Model
     public const STATUS_PAID    = 'paid';
     public const STATUS_FAILED  = 'failed';
 
+    protected $guarded = [];
+
     public function buyer()
     {
         return $this->belongsTo(Buyer::class, 'buyer_id');
@@ -47,6 +49,12 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionDetail::class);
     }
+
+     public function details()
+    {
+        return $this->hasMany(TransactionDetail::class);
+    }
+
 
     public function getStatusLabelAttribute()
     {

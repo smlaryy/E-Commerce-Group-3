@@ -14,6 +14,12 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserTransactionController;
 use App\Http\Controllers\Seller\SellerController;
+use App\Http\Controllers\Seller\SellerBalanceController;
+use App\Http\Controllers\Seller\SellerOrderController;
+use App\Http\Controllers\Seller\SellerProductController;
+use App\Http\Controllers\Seller\SellerStoreController;
+use App\Http\Controllers\Seller\SellerWithdrawalController;
+use App\Http\Controllers\Seller\SellerCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -71,17 +77,46 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('stores', AdminStoreController::class);
 
-        Route::resource('transactions', AdminTransactionController::class)->only(['index','show']);
-        Route::resource('withdrawals', AdminWithdrawalController::class)->only(['index','show','update']);
+        Route::resource('transactions', AdminTransactionController::class)->only(['index', 'show']);
+        Route::resource('withdrawals', AdminWithdrawalController::class)->only(['index', 'show', 'update']);
     });
 
 Route::middleware(['auth', 'role:seller'])
     ->prefix('seller')
     ->name('seller.')
     ->group(function () {
+
+        // 1. Form data toko + dashboard
         Route::get('/form', [SellerController::class, 'create'])->name('form');
         Route::post('/form', [SellerController::class, 'store'])->name('store');
         Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('dashboard');
+
+        // 2. Product Management
+        Route::resource('products', SellerProductController::class)
+            ->names('products');
+
+        // 3. Order Management Page
+        Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+        Route::match(['put', 'patch'], '/orders/{order}', [SellerOrderController::class, 'update'])
+            ->name('orders.update');
+
+
+        // 4. Store Balance Page
+        Route::get('/balance', [SellerBalanceController::class, 'index'])->name('balance.index');
+
+        // 5. Withdrawal Page
+        Route::get('/withdrawals', [SellerWithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::post('/withdrawals', [SellerWithdrawalController::class, 'store'])->name('withdrawals.store');
+
+        // 6. Seller Store Page (profil toko + bank)
+        Route::get('/store', [SellerStoreController::class, 'edit'])->name('store.edit');
+        Route::put('/store', [SellerStoreController::class, 'update'])->name('store.update');
+
+         Route::resource('categories', SellerCategoryController::class)
+            ->except(['show']);
     });
 
-require __DIR__.'/auth.php';
+
+
+require __DIR__ . '/auth.php';
