@@ -134,7 +134,6 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </x-seller-layout>
