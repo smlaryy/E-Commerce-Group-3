@@ -181,12 +181,12 @@
 
             <!-- CATEGORY SECTION -->
             <div class="mb-14">
-                <!-- <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">
-                        <span class="text-orange-500">🧺</span> Belanja Berdasarkan Kategori
+                        <span class="text-orange-500"></span> Belanja Berdasarkan Kategori
                     </h2>
                     <a href="#" class="text-orange-500 hover:text-orange-600 font-semibold text-sm">Lihat Semua →</a>
-                </div> -->
+                </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     @foreach($categories as $category)
@@ -326,7 +326,7 @@
             <div>
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">
-                        <span class="text-blue-500">📦</span> Semua Produk Tersedia
+                        <span class="text-blue-500"></span> Semua Produk Tersedia
                     </h2>
                     <div class="flex items-center gap-3">
                         <select class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
