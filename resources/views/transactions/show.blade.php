@@ -44,44 +44,80 @@
                 </div>
             </div>
 
-            {{-- DETAIL PRODUK --}}
-            <div class="bg-white shadow-sm rounded-lg p-4 mb-6">
-                <h2 class="text-lg font-semibold mb-3">Detail Produk</h2>
+            @php
+                $subtotalProduk = $transaction->transactionDetails->sum('subtotal');
+                $ongkir         = $transaction->shipping_cost ?? 0;
+            @endphp
 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="px-3 py-2 text-left">Produk</th>
-                                <th class="px-3 py-2 text-left">Toko</th>
-                                <th class="px-3 py-2 text-center">Qty</th>
-                                <th class="px-3 py-2 text-right">Harga</th>
-                                <th class="px-3 py-2 text-right">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($transaction->transactionDetails as $detail)
-                                <tr class="border-b">
-                                    <td class="px-3 py-2">
+            {{-- 📦 PRODUK + 🧾 RINGKASAN PEMBAYARAN --}}
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+
+                {{-- 📦 PRODUK --}}
+                <div class="bg-white shadow-sm rounded-lg p-4">
+                    <h2 class="text-lg font-semibold mb-3">Produk</h2>
+
+                    <div class="border-t pt-2 space-y-2 text-sm">
+                        @foreach ($transaction->transactionDetails as $detail)
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="font-medium">
                                         {{ $detail->product->name ?? '-' }}
-                                    </td>
-                                    <td class="px-3 py-2">
-                                        {{ $detail->product->store->name ?? '-' }}
-                                    </td>
-                                    <td class="px-3 py-2 text-center">
-                                        {{ $detail->qty }}
-                                    </td>
-                                    <td class="px-3 py-2 text-right">
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        {{ $detail->qty }} x
                                         Rp {{ number_format($detail->price, 0, ',', '.') }}
-                                    </td>
-                                    <td class="px-3 py-2 text-right">
-                                        Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                        @if($detail->product?->store)
+                                            · {{ $detail->product->store->name }}
+                                        @endif
+                                    </p>
+                                </div>
+                                <p class="font-semibold">
+                                    Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
+                                </p>
+                            </div>
+
+                            @if(!$loop->last)
+                                <hr class="border-dashed">
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
+
+                {{-- 🧾 RINGKASAN PEMBAYARAN --}}
+                <div class="bg-white shadow-sm rounded-lg p-4">
+                    <h2 class="text-lg font-semibold mb-3">Ringkasan Pembayaran</h2>
+
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Subtotal Produk</span>
+                            <span class="font-medium">
+                                Rp {{ number_format($subtotalProduk, 0, ',', '.') }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span>Ongkir</span>
+                            <span class="font-medium">
+                                Rp {{ number_format($ongkir, 0, ',', '.') }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span>Biaya Lainnya</span>
+                            <span class="font-medium">Rp 0</span>
+                        </div>
+
+                        <hr class="my-2">
+
+                        <div class="flex justify-between text-base md:text-lg font-semibold text-orange-600">
+                            <span>Total Pembayaran</span>
+                            <span>
+                                Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             {{-- BAGIAN PEMBAYARAN --}}
@@ -94,7 +130,9 @@
                     @endphp
 
                     <div class="space-y-2 text-sm text-gray-700">
+
                         @if ($method === 'BCA_VA')
+                            <p>Metode pembayaran yang dipilih: <strong>BCA Virtual Account</strong></p>
                             <p>Silakan transfer ke rekening berikut:</p>
                             <ul class="list-disc ml-5 mb-2 text-gray-800">
                                 <li>
@@ -108,6 +146,7 @@
                             <p>Setelah melakukan transfer, klik tombol di bawah untuk konfirmasi bahwa Anda sudah membayar.</p>
 
                         @elseif ($method === 'BNI_VA')
+                            <p>Metode pembayaran yang dipilih: <strong>BNI Virtual Account</strong></p>
                             <p>Silakan transfer ke rekening berikut:</p>
                             <ul class="list-disc ml-5 mb-2 text-gray-800">
                                 <li>
