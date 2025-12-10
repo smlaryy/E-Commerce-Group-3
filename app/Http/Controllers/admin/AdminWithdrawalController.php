@@ -8,20 +8,43 @@ use Illuminate\Http\Request;
 
 class AdminWithdrawalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $withdrawals = Withdrawal::with('storeBalance.store')->paginate(20);
-        return view('admin.withdrawals.index', compact('withdrawals'));
+        // optional filter ?status=pending / approved / rejected / paid
+        $status = $request->query('status');
+
+        $query = Withdrawal::with(['storeBalance.store'])
+            ->latest();
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $withdrawals = $query->paginate(20)->withQueryString();
+
+        return view('admin.withdrawals.index', compact('withdrawals', 'status'));
     }
 
     public function show(Withdrawal $withdrawal)
     {
+        $withdrawal->load(['storeBalance.store']);
+
         return view('admin.withdrawals.show', compact('withdrawal'));
     }
 
     public function update(Request $request, Withdrawal $withdrawal)
     {
-        $withdrawal->update(['status' => $request->status]);
-        return redirect()->back();
+        // status yang diizinkan
+        $data = $request->validate([
+            'status' => ['required', 'in:pending,approved,rejected,paid'],
+        ]);
+
+        $withdrawal->update([
+            'status' => $data['status'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Status withdrawal berhasil diperbarui menjadi: ' . $data['status']);
     }
 }
