@@ -38,6 +38,16 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
+    public function getImageSrcAttribute()
+    {
+        $img = $this->productImages->first()->image ?? null;
+
+        if ($img) {
+            return asset('storage/' . $img);
+        }
+
+        return null; 
+    }
 
     public function transactionDetails()
     {
