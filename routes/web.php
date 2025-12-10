@@ -7,12 +7,14 @@ use App\Http\Controllers\Admin\AdminStoreController;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWithdrawalController;
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserTransactionController;
+
 use App\Http\Controllers\Seller\SellerController;
 use App\Http\Controllers\Seller\SellerBalanceController;
 use App\Http\Controllers\Seller\SellerOrderController;
@@ -36,7 +38,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 
 Route::middleware(['auth', 'role:buyer'])->group(function () {
 
@@ -77,8 +78,11 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('stores', AdminStoreController::class);
 
-        Route::resource('transactions', AdminTransactionController::class)->only(['index', 'show']);
-        Route::resource('withdrawals', AdminWithdrawalController::class)->only(['index', 'show', 'update']);
+        Route::resource('transactions', AdminTransactionController::class)
+            ->only(['index', 'show', 'update']);
+
+        Route::resource('withdrawals', AdminWithdrawalController::class)
+            ->only(['index', 'show', 'update']);
     });
 
 Route::middleware(['auth', 'role:seller'])
@@ -101,11 +105,10 @@ Route::middleware(['auth', 'role:seller'])
         Route::match(['put', 'patch'], '/orders/{order}', [SellerOrderController::class, 'update'])
             ->name('orders.update');
 
-
         // 4. Store Balance Page
         Route::get('/balance', [SellerBalanceController::class, 'index'])->name('balance.index');
 
-        // 5. Withdrawal Page
+        // 5. Withdrawal Page (SELLER)
         Route::get('/withdrawals', [SellerWithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::post('/withdrawals', [SellerWithdrawalController::class, 'store'])->name('withdrawals.store');
 
@@ -113,13 +116,13 @@ Route::middleware(['auth', 'role:seller'])
         Route::get('/store', [SellerStoreController::class, 'edit'])->name('store.edit');
         Route::put('/store', [SellerStoreController::class, 'update'])->name('store.update');
 
-         Route::resource('categories', SellerCategoryController::class)
+        // 7. Seller Categories
+        Route::resource('categories', SellerCategoryController::class)
             ->except(['show']);
     });
 
 Route::get('/public-path', function () {
     return public_path();
 });
-
 
 require __DIR__ . '/auth.php';

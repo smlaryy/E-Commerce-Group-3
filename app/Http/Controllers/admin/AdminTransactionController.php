@@ -24,9 +24,6 @@ class AdminTransactionController extends Controller
         return view('admin.transactions.show', compact('transaction'));
     }
 
-    /**
-     * Admin ubah status pembayaran transaksi
-     */
     public function update(Request $request, Transaction $transaction)
     {
         $data = $request->validate([

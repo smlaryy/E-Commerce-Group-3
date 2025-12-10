@@ -70,7 +70,6 @@ class Transaction extends Model
         };
     }
 
-    // Class badge Tailwind-like dalam bentuk string
     public function getStatusBadgeClassAttribute()
     {
         return match ($this->payment_status) {

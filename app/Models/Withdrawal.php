@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Withdrawal extends Model
 {
-    // Kolom yang boleh di–mass assign (create/update)
     protected $fillable = [
         'store_balance_id',
         'amount',
@@ -16,9 +15,8 @@ class Withdrawal extends Model
         'status',
     ];
 
-    // Casting tipe data
     protected $casts = [
-        'amount' => 'decimal:2',   // supaya selalu dibaca sebagai decimal 2 angka di belakang koma
+        'amount' => 'decimal:2',   
     ];
 
     public const STATUS_PENDING  = 'pending';

@@ -9,6 +9,12 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="mb-4 rounded-md bg-red-100 px-4 py-3 text-sm text-red-700">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <h1 class="text-2xl font-semibold mb-4">
                 Transaksi {{ $transaction->code ?? ('#'.$transaction->id) }}
             </h1>
@@ -122,12 +128,17 @@
 
             {{-- BAGIAN PEMBAYARAN --}}
             <div class="bg-white shadow-sm rounded-lg p-4">
-                @if ($transaction->payment_status === \App\Models\Transaction::STATUS_PENDING)
-                    <h2 class="text-lg font-semibold mb-3">Pembayaran</h2>
+                @php
+                    $method = $transaction->payment_method;
+                @endphp
 
-                    @php
-                        $method = $transaction->payment_method;
-                    @endphp
+                {{-- PENDING & WAITING_CONFIRMATION: tampilkan instruksi pembayaran --}}
+                @if (in_array($transaction->payment_status, [
+                        \App\Models\Transaction::STATUS_PENDING,
+                        \App\Models\Transaction::STATUS_WAITING_CONFIRMATION
+                    ]))
+
+                    <h2 class="text-lg font-semibold mb-3">Pembayaran</h2>
 
                     <div class="space-y-2 text-sm text-gray-700">
 
@@ -312,34 +323,66 @@
                         @endif
                     </div>
 
-                    {{-- Tidak ada lagi tombol "Saya sudah bayar" --}}
-                    {{-- User hanya bisa melihat pesanan, verifikasi dilakukan admin --}}
-
-                    <div class="mt-4">
+                    {{-- TOMBOL / INFO SESUAI STATUS --}}
+                    <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
                         <a
                             href="{{ route('transactions.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 
-                                   text-white rounded-md font-semibold text-xs uppercase tracking-widest
-                                   shadow transition"
+                            class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200
+                                   text-gray-800 rounded-md font-semibold text-xs uppercase tracking-widest
+                                   shadow-sm transition"
                         >
                             Lihat Pesanan
                         </a>
+
+                        @if ($transaction->payment_status === \App\Models\Transaction::STATUS_PENDING)
+                            {{-- Buyer masih boleh klik "Saya sudah bayar" --}}
+                            <form action="{{ route('transactions.pay', $transaction->id) }}" method="POST">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600
+                                           text-white rounded-md font-semibold text-xs uppercase tracking-widest
+                                           shadow transition"
+                                >
+                                    Saya sudah bayar
+                                </button>
+                            </form>
+                        @elseif ($transaction->payment_status === \App\Models\Transaction::STATUS_WAITING_CONFIRMATION)
+                            <p class="text-xs text-blue-600 font-medium">
+                                Konfirmasi pembayaran sudah dikirim. Menunggu verifikasi admin.
+                            </p>
+                        @endif
                     </div>
-                @else
-                    <div class="rounded-md bg-green-100 px-4 py-3 text-sm text-green-700">
+
+                {{-- STATUS PAID --}}
+                @elseif ($transaction->payment_status === \App\Models\Transaction::STATUS_PAID)
+                    <div class="rounded-md bg-green-100 px-4 py-3 text-sm text-green-700 mb-3">
                         Pembayaran sudah diterima. Terima kasih! 🎉
                     </div>
 
-                    <div class="mt-4">
-                        <a
-                            href="{{ route('transactions.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 
-                                   text-white rounded-md font-semibold text-xs uppercase tracking-widest
-                                   shadow transition"
-                        >
-                            Lihat Pesanan
-                        </a>
+                    <a
+                        href="{{ route('transactions.index') }}"
+                        class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 
+                               text-white rounded-md font-semibold text-xs uppercase tracking-widest
+                               shadow transition"
+                    >
+                        Lihat Pesanan
+                    </a>
+
+                {{-- STATUS FAILED --}}
+                @elseif ($transaction->payment_status === \App\Models\Transaction::STATUS_FAILED)
+                    <div class="rounded-md bg-red-100 px-4 py-3 text-sm text-red-700 mb-3">
+                        Transaksi gagal atau dibatalkan. Silakan buat pesanan baru jika masih ingin melanjutkan.
                     </div>
+
+                    <a
+                        href="{{ route('transactions.index') }}"
+                        class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 
+                               text-gray-800 rounded-md font-semibold text-xs uppercase tracking-widest
+                               shadow-sm transition"
+                    >
+                        Lihat Pesanan
+                    </a>
                 @endif
             </div>
 
