@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\UserTransactionController;
 
 use App\Http\Controllers\Seller\SellerController;
@@ -60,6 +61,10 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
     Route::get('/transactions', [UserTransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{id}', [UserTransactionController::class, 'show'])->name('transactions.show');
     Route::post('/transactions/{id}/pay', [UserTransactionController::class, 'pay'])->name('transactions.pay');
+
+    Route::post('/products/{product}/reviews', [ProductReviewController::class, 'store'])
+    ->middleware('auth')
+    ->name('products.reviews.store');
 });
 
 Route::middleware(['auth', 'role:admin'])

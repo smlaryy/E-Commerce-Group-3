@@ -21,6 +21,48 @@
             font-size: 13px;
         }
 
+        /* PROFIL ADMIN */
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        .admin-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: #ff7a00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .admin-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            line-height: 1.2;
+        }
+
+        .admin-role {
+            font-size: 11px;
+            color: #6b7280;
+            line-height: 1.2;
+        }
+
         .badge-env {
             padding: 6px 10px;
             border-radius: 999px;
@@ -126,6 +168,12 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
     </style>
 
@@ -136,6 +184,23 @@
                 Ringkasan cepat aktivitas di Sembako Mart.
             </p>
         </div>
+
+        {{-- Profil admin --}}
+        @php
+            $admin = auth()->user();
+            $initial = $admin ? mb_strtoupper(mb_substr($admin->name ?? 'A', 0, 1)) : 'A';
+        @endphp
+
+        <a href="{{ route('profile.edit') }}" class="admin-profile"
+           style="text-decoration: none; color: inherit; cursor: pointer;">
+            <div class="admin-avatar">
+                {{ $initial }}
+            </div>
+            <div class="admin-info">
+                <span class="admin-name">{{ $admin->name ?? 'Admin' }}</span>
+                <span class="admin-role">{{ $admin->email ?? 'admin@example.com' }}</span>
+            </div>
+        </a>
     </div>
 
     {{-- Kartu statistik --}}

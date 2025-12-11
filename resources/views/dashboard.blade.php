@@ -1,11 +1,9 @@
 <x-app-layout>
     <div class="bg-gradient-to-b from-orange-50 to-white min-h-screen">
 
-        <!-- HERO CAROUSEL -->
         <div x-data="carousel()" class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
             <div class="relative rounded-2xl overflow-hidden shadow-2xl">
 
-                <!-- Slides -->
                 <template x-for="(slide, index) in slides" :key="index">
                     <div x-show="current === index"
                         x-transition:enter="transition ease-out duration-500"
@@ -13,14 +11,11 @@
                         x-transition:enter-end="opacity-100"
                         class="relative w-full h-72 sm:h-80 md:h-96 lg:h-[450px]">
 
-                        <!-- Background Image -->
                         <img :src="slide.image" class="absolute inset-0 w-full h-full object-cover" alt="">
 
-                        <!-- Gradient Overlay -->
                         <div class="absolute inset-0"
                             :style="'background: linear-gradient(135deg, ' + slide.gradient + ')'"></div>
 
-                        <!-- Slide Content -->
                         <div
                             class="relative h-full
                             flex flex-col lg:flex-row
@@ -59,7 +54,7 @@
                                     Belanja Sekarang →
                                 </a>
                                 @else
-                                <a href="{{ route('dashboard') }}"
+                                <a href="{{ route('products.index') }}"
                                     class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold
                                               px-6 sm:px-8 py-2.5 sm:py-3 rounded-full
                                               text-sm sm:text-base
@@ -69,22 +64,17 @@
                                 @endif
                             </div>
 
-                            <!-- Product Image with Dynamic Elements (desktop only) -->
                             <template x-if="slide.productImage">
                                 <div class="hidden lg:block relative z-10">
-                                    <!-- Floating Badges -->
                                     <div
                                         class="absolute -top-6 -left-6 bg-red-500 text-white font-bold px-4 py-2 rounded-lg shadow-xl transform -rotate-12 animate-bounce z-20">
                                         <span class="text-xs">DISKON</span>
                                         <div class="text-2xl">30%</div>
                                     </div>
 
-                                    <!-- Main Product Image with Rotation -->
                                     <div class="relative transform hover:rotate-6 transition duration-500">
-                                        <!-- Background Decoration Circle -->
                                         <div class="absolute inset-0 bg-white/20 rounded-full blur-3xl scale-110"></div>
 
-                                        <!-- Product Image -->
                                         <img :src="slide.productImage"
                                             class="relative h-64 xl:h-80 drop-shadow-2xl transform hover:scale-110 transition duration-500 rounded-3xl"
                                             alt=""
