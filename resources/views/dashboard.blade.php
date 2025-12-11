@@ -499,7 +499,6 @@
                 {{ $products->links() }}
             </div>
         </div>
-
     </div> {{-- end max-w wrapper --}}
     </div> {{-- end bg gradient --}}
 </x-app-layout>
