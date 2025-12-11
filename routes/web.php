@@ -24,22 +24,30 @@ use App\Http\Controllers\Seller\SellerWithdrawalController;
 use App\Http\Controllers\Seller\SellerCategoryController;
 use Illuminate\Support\Facades\Route;
 
+// =====================
+// PUBLIC ROUTES
+// =====================
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
+// =====================
+// AUTH + VERIFIED (UMUM) → PROFILE
+// =====================
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [HomeController::class, 'index'])
-        ->middleware('role:buyer,seller')
-        ->name('dashboard');
-
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+// =====================
+// BUYER AREA (dashboard, cart, checkout, orders, transaksi)
+// =====================
+Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
+
+    // Dashboard buyer
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // Cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -51,12 +59,19 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
-    // Transaksi user (riwayat + detail + pembayaran)
+    // Pesanan aktif (tracking)
+    Route::get('/orders', [UserTransactionController::class, 'orders'])->name('orders.index');
+    Route::get('/orders/{id}/track', [UserTransactionController::class, 'track'])->name('orders.track');
+
+    // Transaksi user (riwayat + detail + konfirmasi bayar)
     Route::get('/transactions', [UserTransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{id}', [UserTransactionController::class, 'show'])->name('transactions.show');
     Route::post('/transactions/{id}/pay', [UserTransactionController::class, 'pay'])->name('transactions.pay');
 });
 
+// =====================
+// ADMIN AREA
+// =====================
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -85,6 +100,9 @@ Route::middleware(['auth', 'role:admin'])
             ->only(['index', 'show', 'update']);
     });
 
+// =====================
+// SELLER AREA
+// =====================
 Route::middleware(['auth', 'role:seller'])
     ->prefix('seller')
     ->name('seller.')
@@ -121,6 +139,7 @@ Route::middleware(['auth', 'role:seller'])
             ->except(['show']);
     });
 
+// debug route (optional, boleh dihapus kalau nggak dipakai)
 Route::get('/public-path', function () {
     return public_path();
 });
