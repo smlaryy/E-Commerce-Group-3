@@ -24,26 +24,19 @@ use App\Http\Controllers\Seller\SellerWithdrawalController;
 use App\Http\Controllers\Seller\SellerCategoryController;
 use Illuminate\Support\Facades\Route;
 
-// =====================
-// PUBLIC ROUTES
-// =====================
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/category/{slug}', [HomeController::class, 'category'])->name('category.show');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 
-// =====================
-// AUTH + VERIFIED (UMUM) → PROFILE
-// =====================
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// =====================
-// BUYER AREA (dashboard, cart, checkout, orders, transaksi)
-// =====================
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 
     // Dashboard buyer
@@ -69,9 +62,6 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
     Route::post('/transactions/{id}/pay', [UserTransactionController::class, 'pay'])->name('transactions.pay');
 });
 
-// =====================
-// ADMIN AREA
-// =====================
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -100,9 +90,6 @@ Route::middleware(['auth', 'role:admin'])
             ->only(['index', 'show', 'update']);
     });
 
-// =====================
-// SELLER AREA
-// =====================
 Route::middleware(['auth', 'role:seller'])
     ->prefix('seller')
     ->name('seller.')
